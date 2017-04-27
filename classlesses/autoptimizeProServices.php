@@ -18,69 +18,39 @@ function ao_add_proserv_tabs($in) {
 add_action('admin_menu','ao_proserv_init');
 function ao_proserv_init() {
     if (apply_filters('autoptimize_filter_show_partner_tabs',true)) {
-        $hook=add_submenu_page(NULL,'AO proserv','AO proserv','manage_options','ao_proserv','ao_proserv');
+        $hook=add_submenu_page(NULL,'AO proserv','AO proserv','manage_options','ao_proserv','ao_proserv_displayPage');
         // register_settings here as well if needed
     }
 }
 
-function ao_proserv() {
+function ao_proserv_displayPage() {
     ?>
     <style>
-    .itemDetail {
-        background: #fff;
-        width: 250px;
-        min-height: 290px;
-        border: 1px solid #ccc;
-        float: left;
-        padding: 15px;
-        position: relative;
-        margin: 0 10px 10px 0;
-    }
-    .itemTitle {
-        margin-top:0px;
-        margin-bottom:10px;
-    }
-    .itemImage {
-        text-align: center;        
-    }
-    .itemImage img {
-        max-width: 95%;
-        max-height: 150px;
-    }
-    .itemDescription {
-        margin-bottom:30px;
-    }
-    .itemButtonRow {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width:100%;
-    }
-    .itemButton {
-        float:right;
-    }
-    .itemButton a {
-        text-decoration: none;
-        color: #555;
-    }
-    .itemButton a:hover {
-        text-decoration: none;
-        color: #23282d;
-    }    
     </style>
     <div class="wrap">
         <h1><?php _e('Autoptimize Settings','autoptimize'); ?></h1>
         <?php echo autoptimizeConfig::ao_admin_tabs(); ?>
-        <?php
-            echo '<h2>'. __("These Autoptimize power-ups and related services will improve your site's performance even more!",'autoptimize') . '</h2>';
+        <?php 
+        $ao_proserv_template = ao_proserv_getTemplate();
+        echo str_replace("<!--ao_proserv_form-->","<input type=\"text\">",$ao_proserv_template);
         ?>
-        <div>
-            <?php getAOPartnerFeed(); ?>
-        </div>
     </div>
     <?php
 }
 
+function ao_proserv_getTemplate() {
+    /*
+        * get from remote (short timeout!)
+        * store in transient for 1d
+        * use hardcoded one as fallback
+    */ 
+    return "
+    <h2>Titel</h2>
+    <p>paragraaf 1 paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1</p>
+    <!--ao_proserv_form-->
+    <p>paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2</p>
+    ";
+}
 /* function getAOPartnerFeed() {
     $noFeedText=__( 'Have a look at <a href="http://optimizingmatters.com/">optimizingmatters.com</a> for Autoptimize power-ups!', 'autoptimize' );
 
