@@ -25,6 +25,7 @@ include( AUTOPTIMIZE_PLUGIN_DIR.'classes/autoptimizeToolbar.php' );
 // Load partners tab if admin
 if (is_admin()) {
     include AUTOPTIMIZE_PLUGIN_DIR.'classlesses/autoptimizePartners.php';
+    include AUTOPTIMIZE_PLUGIN_DIR.'classlesses/autoptimizeProServices.php';    
 }
 
 // Do we gzip when caching (needed early to load autoptimizeCache.php)

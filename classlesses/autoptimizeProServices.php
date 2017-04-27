@@ -3,20 +3,20 @@
 Classlessly add a "more tools" tab to promote (future) AO addons and/ or affiliate services
 */
 
-add_action('admin_init', 'ao_partner_tabs_preinit');
-function ao_partner_tabs_preinit() {
+add_action('admin_init', 'ao_proserv_tabs_preinit');
+function ao_proserv_tabs_preinit() {
     if (apply_filters('autoptimize_filter_show_partner_tabs',true)) {
         add_filter('autoptimize_filter_settingsscreen_tabs','ao_add_proserv_tabs');
     }
 }
 
 function ao_add_proserv_tabs($in) {
-    $in=array_merge($in,array('ao_partners' => __('Need Pro Help?','autoptimize')));
+    $in=array_merge($in,array('ao_proserv' => __('Need Pro Help?','autoptimize')));
     return $in;
 }
 
-add_action('admin_menu','ao_partners_init');
-function ao_partners_init() {
+add_action('admin_menu','ao_proserv_init');
+function ao_proserv_init() {
     if (apply_filters('autoptimize_filter_show_partner_tabs',true)) {
         $hook=add_submenu_page(NULL,'AO proserv','AO proserv','manage_options','ao_proserv','ao_proserv');
         // register_settings here as well if needed
