@@ -3,6 +3,8 @@
 Classlessly add a "more tools" tab to promote (future) AO addons and/ or affiliate services
 */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 add_action('admin_init', 'ao_proserv_tabs_preinit');
 function ao_proserv_tabs_preinit() {
     if (apply_filters('autoptimize_filter_show_partner_tabs',true)) {
@@ -32,7 +34,8 @@ function ao_proserv_displayPage() {
         <?php echo autoptimizeConfig::ao_admin_tabs(); ?>
         <?php 
         $ao_proserv_template = ao_proserv_getTemplate();
-        echo str_replace("<!--ao_proserv_form-->","<input type=\"text\">",$ao_proserv_template);
+        $ao_proserv_form = ao_proserv_getForm();
+        echo str_replace("<!--ao_proserv_form-->",$ao_proserv_form,$ao_proserv_template);
         ?>
     </div>
     <?php
@@ -44,13 +47,25 @@ function ao_proserv_getTemplate() {
         * store in transient for 1d
         * use hardcoded one as fallback
     */ 
-    return "
-    <h2>Titel</h2>
+    return "<h2>Titel</h2>
     <p>paragraaf 1 paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1</p>
     <!--ao_proserv_form-->
     <p>paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2</p>
     ";
 }
+
+function ao_proserv_getForm() {
+    return "<form method='post' action='options.php'>
+    <input type='hidden' name='option_page' value='ao_proserv' />
+    <input type='text' value='" . site_url() . "' />
+    <input type='submit'>
+    </form>";
+}
+
+function ao_proserv_mailForm() {
+    
+}
+
 /* function getAOPartnerFeed() {
     $noFeedText=__( 'Have a look at <a href="http://optimizingmatters.com/">optimizingmatters.com</a> for Autoptimize power-ups!', 'autoptimize' );
 
