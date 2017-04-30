@@ -35,6 +35,7 @@ function ao_proserv_displayPage() {
         <?php 
         $ao_proserv_template = ao_proserv_getTemplate();
         $ao_proserv_form = ao_proserv_getForm();
+        $ao_proserv_form = "<div style='width:70%;'><form id='ao_proserv_form'>".$ao_proserv_form."</form></div>";
         echo str_replace("<!--ao_proserv_form-->",$ao_proserv_form,$ao_proserv_template);
         ?>
     </div>
@@ -55,11 +56,15 @@ function ao_proserv_getTemplate() {
 }
 
 function ao_proserv_getForm() {
-    return "<form method='post' action='options.php'>
-    <input type='hidden' name='option_page' value='ao_proserv' />
-    <input type='text' value='" . site_url() . "' />
-    <input type='submit'>
-    </form>";
+    return "<legend></legend>
+    <label><input type='text' value='' placeholder='Your name' required='true' /></label>
+    <label><input type='email' value='' placeholder='Your email-address' required='true' /></label><br />
+    <label><input type='text' value='" . site_url() . "' pattern='^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$' placeholder='Your website' required='true' /></label><br />
+    <label><input type='radio' name='proserv_type' value='AO'>Autoptimize Pro Configuration (€99)</label><br />
+    <label><input type='radio' name='proserv_type' value='OM'>Complete Speed Optimization (€499)</label><br />
+    <label><textarea rows='5' style='width:100%;' placeholder='Anything you want to ask or tell us?'></textarea></label><br />
+    <input type='submit' value='Submit' class='button-primary'>
+";
 }
 
 function ao_proserv_mailForm() {
