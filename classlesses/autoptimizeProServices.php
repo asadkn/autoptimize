@@ -33,10 +33,9 @@ function ao_proserv_displayPage() {
         <h1><?php _e('Autoptimize Settings','autoptimize'); ?></h1>
         <?php echo autoptimizeConfig::ao_admin_tabs(); ?>
         <?php 
-        $ao_proserv_template = ao_proserv_getTemplate();
-        $ao_proserv_form = ao_proserv_getForm();
-        $ao_proserv_form = "<div style='width:70%;'><form id='ao_proserv_form'>".$ao_proserv_form."</form></div>";
-        echo str_replace("<!--ao_proserv_form-->",$ao_proserv_form,$ao_proserv_template);
+        echo ao_proserv_getTemplate();
+        // $ao_proserv_form = "<div style='width:70%;'><form id='ao_proserv_form'>".$ao_proserv_form."</form></div>";
+        echo ao_proserv_mailJS();
         ?>
     </div>
     <?php
@@ -50,23 +49,64 @@ function ao_proserv_getTemplate() {
     */ 
     return "<h2>Titel</h2>
     <p>paragraaf 1 paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1</p>
-    <!--ao_proserv_form-->
+    <legend></legend>
+    <form id='ao_proserv_form'>
+        <label><input name='name' type='text' value='' placeholder='Your name' required='true' /></label>
+        <label><input type='email' name='mail' value='' placeholder='Your email-address' required='true' /></label><br />
+        <label><input type='text' name='url' value='" . site_url() . "' pattern='^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$' placeholder='Your website' required='true' /></label><br />
+        <label><input type='radio' name='proserv_type' value='AO'>Autoptimize Pro Configuration (€99)</label><br />
+        <label><input type='radio' name='proserv_type' value='OM'>Complete Speed Optimization (€499)</label><br />
+        <label><textarea name='extra' rows='5' style='width:100%;' placeholder='Anything you want to ask or tell us?'></textarea></label><br />
+        <input type='submit' value='Submit' class='button-primary'>
+    </form>
     <p>paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2</p>
     ";
 }
 
-function ao_proserv_getForm() {
-    return "<legend></legend>
-    <label><input type='text' value='' placeholder='Your name' required='true' /></label>
-    <label><input type='email' value='' placeholder='Your email-address' required='true' /></label><br />
-    <label><input type='text' value='" . site_url() . "' pattern='^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$' placeholder='Your website' required='true' /></label><br />
-    <label><input type='radio' name='proserv_type' value='AO'>Autoptimize Pro Configuration (€99)</label><br />
-    <label><input type='radio' name='proserv_type' value='OM'>Complete Speed Optimization (€499)</label><br />
-    <label><textarea rows='5' style='width:100%;' placeholder='Anything you want to ask or tell us?'></textarea></label><br />
-    <input type='submit' value='Submit' class='button-primary'>
-";
+function ao_proserv_mailJS() {
+    echo "<script>
+    var data = {
+        'action': 'ao_proserv_sendmail',
+        'ao_proserv_nonce': '".wp_create_nonce( "ao_proserv_nonce".md5(site_url()) )."',
+        'ao_proserv_form_data': new Object
+    };
+
+    function ao_proserv_sendmail() {
+        // collect data
+        jQuery('#ao_proserv_form').find(':input').each(
+            function() {
+                if (this.name && (this.type !== 'radio' || this.checked)) {
+                    data['ao_proserv_form_data'][this.name] = this.value;
+                }
+            }
+        );
+        
+        // send to server
+        jQuery.post(ajaxurl, data, function(response) {
+            if (response != 'ok') {
+                // displayNotice(response_array['string']);
+                alert('nok');
+            } else {
+                alert('ok');
+            }
+        });
+    }
+    </script>";  
 }
 
-function ao_proserv_mailForm() {
-    
+function ao_proserv_mailAjax() {
+    check_ajax_referer( "ao_proserv_nonce".md5(site_url()), 'ao_proserv_nonce' );
+    if ( current_user_can('manage_options') ) {
+        // mail stuff
+        $mailbody="";
+        foreach ($_POST["ao_proserv_form_data"] as $name => $value) {
+            $mailbody .= $name.": ".$value."\n";
+        }
+        error_log($mailbody);
+        
+        // and echo OK leading to browser reload
+        echo "ok";
+    }
+    die();
 }
+add_action( 'wp_ajax_ao_proserv_sendmail', 'ao_proserv_mailAjax' );
