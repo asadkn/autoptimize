@@ -57,7 +57,7 @@ function ao_proserv_getTemplate() {
         <label><input type='radio' name='proserv_type' value='AO'>Autoptimize Pro Configuration (€99)</label><br />
         <label><input type='radio' name='proserv_type' value='OM'>Complete Speed Optimization (€499)</label><br />
         <label><textarea name='extra' rows='5' style='width:100%;' placeholder='Anything you want to ask or tell us?'></textarea></label><br />
-        <input type='submit' value='Submit' class='button-primary'>
+        <input id='proserv_submit' type='submit' value='Submit' class='button-primary'>
     </form>
     <p>paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2</p>
     ";
@@ -65,6 +65,13 @@ function ao_proserv_getTemplate() {
 
 function ao_proserv_mailJS() {
     echo "<script>
+    jQuery('#proserv_submit').click(
+		function(){
+			ao_proserv_sendmail();
+			return false;
+		}
+	);
+    
     var data = {
         'action': 'ao_proserv_sendmail',
         'ao_proserv_nonce': '".wp_create_nonce( "ao_proserv_nonce".md5(site_url()) )."',
@@ -73,23 +80,32 @@ function ao_proserv_mailJS() {
 
     function ao_proserv_sendmail() {
         // collect data
+        dontSend = new Array;
         jQuery('#ao_proserv_form').find(':input').each(
             function() {
-                if (this.name && (this.type !== 'radio' || this.checked)) {
-                    data['ao_proserv_form_data'][this.name] = this.value;
-                }
+				if (!this.checkValidity()) {
+					dontSend.push(this.name);
+				} else {
+					if (this.name && (this.type !== 'radio' || this.checked)) {
+						data['ao_proserv_form_data'][this.name] = this.value;
+					}
+				}
             }
         );
         
         // send to server
-        jQuery.post(ajaxurl, data, function(response) {
-            if (response != 'ok') {
-                // displayNotice(response_array['string']);
-                alert('nok: '+response);
-            } else {
-                alert('ok');
-            }
-        });
+        if (typeof dontSend === 'undefined' || dontSend.length === 0) {
+			jQuery.post(ajaxurl, data, function(response) {
+				if (response != 'ok') {
+					// displayNotice(response_array['string']);
+					alert('nok: '+response);
+				} else {
+					alert('ok');
+				}
+			});
+		} else {
+			console.log('problem with form'+JSON.stringify(dontSend));
+		}
     }
     </script>";  
 }
@@ -118,11 +134,11 @@ function ao_proserv_mailAjax() {
 }
 add_action( 'wp_ajax_ao_proserv_sendmail', 'ao_proserv_mailAjax' );
 
-add_action( 'phpmailer_init', 'mailer_config', 10, 1);
+// add_action( 'phpmailer_init', 'mailer_config', 10, 1);
 function mailer_config(PHPMailer $mailer){
-  //$mailer->IsSMTP();
-  //$mailer->Host = "mail.telemar.it"; // your SMTP server
-  //$mailer->Port = 25;
+  $mailer->IsSMTP();
+  $mailer->Host = "out.gmail.com"; // your SMTP server
+  $mailer->Port = 25;
   $mailer->SMTPDebug = 2; // write 0 if you don't want to see client/server communication in page
   $mailer->CharSet  = "utf-8";
 }
