@@ -85,7 +85,7 @@ function ao_proserv_mailJS() {
         jQuery.post(ajaxurl, data, function(response) {
             if (response != 'ok') {
                 // displayNotice(response_array['string']);
-                alert('nok');
+                alert('nok: '+response);
             } else {
                 alert('ok');
             }
@@ -98,15 +98,31 @@ function ao_proserv_mailAjax() {
     check_ajax_referer( "ao_proserv_nonce".md5(site_url()), 'ao_proserv_nonce' );
     if ( current_user_can('manage_options') ) {
         // mail stuff
-        $mailbody="";
+        $mailbody="New lead from the Autoptimize plugin admin pages:\n";
+        
         foreach ($_POST["ao_proserv_form_data"] as $name => $value) {
             $mailbody .= $name.": ".$value."\n";
         }
-        error_log($mailbody);
         
-        // and echo OK leading to browser reload
-        echo "ok";
+        $mailbody="Now go close that deal!\n";
+        $to="futtta@gmail.com";
+        $subject="New Autoptimize consultancy lead";
+        
+        if (wp_mail($to,$subject,$mailbody)) {
+            echo "ok";
+        } else {
+            echo "nomail";
+        }
     }
     die();
 }
 add_action( 'wp_ajax_ao_proserv_sendmail', 'ao_proserv_mailAjax' );
+
+add_action( 'phpmailer_init', 'mailer_config', 10, 1);
+function mailer_config(PHPMailer $mailer){
+  //$mailer->IsSMTP();
+  //$mailer->Host = "mail.telemar.it"; // your SMTP server
+  //$mailer->Port = 25;
+  $mailer->SMTPDebug = 2; // write 0 if you don't want to see client/server communication in page
+  $mailer->CharSet  = "utf-8";
+}
