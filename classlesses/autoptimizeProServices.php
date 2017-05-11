@@ -51,12 +51,12 @@ function ao_proserv_getTemplate() {
     <p>paragraaf 1 paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1paragraaf 1</p>
     <legend></legend>
     <form id='ao_proserv_form'>
-        <label><input name='name' type='text' value='' placeholder='Your name' required='true' /></label>
-        <label><input type='email' name='mail' value='' placeholder='Your email-address' required='true' /></label><br />
-        <label><input type='text' name='url' value='" . site_url() . "' pattern='^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$' placeholder='Your website' required='true' /></label><br />
+        <label><input id='proserv_name' name='name' type='text' value='' placeholder='Your name' required='true' /></label>
+        <label><input id='proserv_mail' type='email' name='mail' value='' placeholder='Your email-address' required='true' /></label><br />
+        <label><input id='proserv_url' type='text' name='url' value='" . site_url() . "' pattern='^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$' placeholder='Your website' required='true' /></label><br />
         <label><input type='radio' name='proserv_type' value='AO'>Autoptimize Pro Configuration (€99)</label><br />
         <label><input type='radio' name='proserv_type' value='OM'>Complete Speed Optimization (€499)</label><br />
-        <label><textarea name='extra' rows='5' style='width:100%;' placeholder='Anything you want to ask or tell us?'></textarea></label><br />
+        <label><textarea id='proserv_extra' name='extra' rows='5' style='width:100%;' placeholder='Anything you want to ask or tell us?'></textarea></label><br />
         <input id='proserv_submit' type='submit' value='Submit' class='button-primary'>
     </form>
     <p>paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2 paragraaf 2</p>
@@ -84,7 +84,7 @@ function ao_proserv_mailJS() {
         jQuery('#ao_proserv_form').find(':input').each(
             function() {
 				if (!this.checkValidity()) {
-					dontSend.push(this.name);
+					dontSend.push(this.id);
 				} else {
 					if (this.name && (this.type !== 'radio' || this.checked)) {
 						data['ao_proserv_form_data'][this.name] = this.value;
@@ -104,7 +104,9 @@ function ao_proserv_mailJS() {
 				}
 			});
 		} else {
-			console.log('problem with form'+JSON.stringify(dontSend));
+			foreach (dontsend as error) {
+				jQuery(error).style='border:red;';
+			}
 		}
     }
     </script>";  
