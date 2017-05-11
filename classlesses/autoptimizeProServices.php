@@ -104,8 +104,10 @@ function ao_proserv_mailJS() {
 				}
 			});
 		} else {
-			foreach (dontsend as error) {
-				jQuery(error).style='border:red;';
+			console.log(dontSend);
+			for (error in dontSend) {
+				console.log(dontSend[error]);
+				jQuery('#'+dontSend[error]).css( "border", "red" );
 			}
 		}
     }
